@@ -1,0 +1,58 @@
+---
+title: "Лабораторна робота №2_Інтелектуальний аналіз даних_Цукаєв"
+output: html_document
+date: "2024-05-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(HSAUR)
+library(ggplot2)
+library(dbplyr)
+library(dplyr)
+library(RSQLite)
+library(tidyr)
+
+data("heptathlon", package = "HSAUR")
+
+con <- dbConnect(RSQLite::SQLite(), dbname = "heptathlon.db")
+
+# Експорт даних у таблицю бази даних з перезаписом існуючої таблиці
+dbWriteTable(con, "heptathlon", heptathlon, overwrite = TRUE)
+
+# Виконання запиту до бази даних для перевірки
+result <- dbGetQuery(con, "SELECT * FROM heptathlon LIMIT 10")
+print(result)
+
+# Закриття з'єднання з базою даних
+dbDisconnect(con)
+
+# Додавання змінних для бігових подій
+heptathlon <- heptathlon %>%
+  mutate(run200m = rnorm(n(), mean = 25, sd = 1.5))
+
+# Вибір стовпців для бігових змагань та ідентифікації учасників
+running_events <- heptathlon %>%
+  mutate(rownames = rownames(heptathlon)) %>%
+  select(rownames, hurdles, run200m)
+
+# Перетворення даних у довгий формат
+running_long <- running_events %>%
+  pivot_longer(cols = -rownames, names_to = "event", values_to = "time")
+
+ggplot(running_long, aes(x = event, y = time, color = rownames)) +
+  geom_point() +
+  geom_line(aes(group = rownames)) +
+  labs(title = "Результати бігових змагань по учасниках",
+       x = "Змагання", y = "Час (секунди)",
+       color = "Учасник") +
+  theme_minimal()
+
+         
+         
+
+
+
+
+```
+
