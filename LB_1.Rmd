@@ -1,0 +1,24 @@
+---
+title: "Лабораторна робота №1_Інтелектуальний аналіз даних_Цукаєв"
+output: html_document
+ 
+date: "2024-05-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(HSAUR)
+library(ggplot2)
+
+# Завантаження набору даних
+data("heptathlon", package = "HSAUR")
+
+
+# Побудова гістограми для бігу на 200 метрів
+ggplot(heptathlon, aes(x = hurdles)) +
+  geom_histogram(binwidth = 0.2, fill = "blue", color = "black") +
+  labs(title = "Гістограма: Біг на 200 метрів", x = "Час (секунди)", y = "Кількість учасників")
+
+
+```
+
